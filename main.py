@@ -24,7 +24,6 @@ app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 app.include_router(router)
 
-
 @app.get("/")
 async def root():
     return {"message": "E-Student Cell API is running"}
