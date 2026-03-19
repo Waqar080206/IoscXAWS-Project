@@ -1,4 +1,4 @@
-const API = "https://estudent-cell.onrender.com/";
+const API = "https://estudent-cell.onrender.com";
 
 async function apiFetch(path, options = {}) {
   const res = await fetch(API + path, {
