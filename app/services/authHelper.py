@@ -77,7 +77,7 @@ async def get_user_by_id(db: AsyncSession, user_id: int):
     return result.scalars().first()
 
 async def create_new_user(db: AsyncSession, username: str, plain_password: str, role: RoleEnum):
-    hashed_pwd = get_password_hash(plain_password)
+    hashed_pwd = await get_password_hash(plain_password)
     db_user = DBUser(username=username, role=role, password_hash=hashed_pwd)
     db.add(db_user)
     await  db.commit()
