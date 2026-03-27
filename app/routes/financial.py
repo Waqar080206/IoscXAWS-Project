@@ -3,16 +3,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db 
 import app.schema.schemas as schemas 
 from app.services import financial_services
+from app.services.authorization_services import verify_user_access
 
 router = APIRouter(
     prefix="/students/{student_id}/financial",
-    tags=["Financial"]
+    tags=["Financial"],
+    dependencies=[Depends(verify_user_access)]
 )
 
 
 @router.post("/", response_model=schemas.FinancialResponse)
 async def create_financial(
-    student_id: int,
+    student_id: str,
     data: schemas.FinancialCreate,
     db: AsyncSession = Depends(get_db)
 ):
@@ -26,7 +28,7 @@ async def create_financial(
 
 @router.put("/", response_model=schemas.FinancialResponse)
 async def update_financial(
-    student_id: int,
+    student_id: str,
     data: schemas.FinancialCreate,
     db: AsyncSession = Depends(get_db)
 ):
@@ -40,7 +42,7 @@ async def update_financial(
 
 @router.get("/", response_model=schemas.FinancialResponse)
 async def get_financial(
-    student_id: int,
+    student_id: str,
     db: AsyncSession = Depends(get_db)
 ):
     try:

@@ -3,17 +3,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.services import parent_services
 import app.schema.schemas as schemas
+from app.services.authorization_services import verify_user_access
 
 
 router = APIRouter(
     prefix="/students/{student_id}/parent",
-    tags=["Parent"]
+    tags=["Parent"],
+    dependencies=[Depends(verify_user_access)]
 )
 
 
 @router.post("/", response_model=schemas.ParentResponse)
 async def create_parent(
-    student_id: int,
+    student_id: str,
     data: schemas.ParentCreate,
     db: AsyncSession = Depends(get_db)
 ):
@@ -27,7 +29,7 @@ async def create_parent(
 
 @router.put("/", response_model=schemas.ParentResponse)
 async def update_parent(
-    student_id: int,
+    student_id: str,
     data: schemas.ParentCreate,
     db: AsyncSession = Depends(get_db)
 ):
@@ -41,7 +43,7 @@ async def update_parent(
 
 @router.get("/", response_model=schemas.ParentResponse)
 async def get_parent(
-    student_id: int,
+    student_id: str,
     db: AsyncSession = Depends(get_db)
 ):
     try:
