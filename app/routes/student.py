@@ -35,12 +35,13 @@ async def list_students(
     current_user: DBUser = Depends(get_current_user)
 ):
 
-    if str(current_user.role) == "student":
-        raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You can only see your information"
-            )
     try:
+        if str(current_user.role) != "admin":
+            raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You can only see your information"
+                )
+
         return await student_services.list_students(db, branch, year)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
