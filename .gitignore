@@ -6,3 +6,4 @@ uploads/
 *.pyc
 compose.yaml
 alembic.ini
+admin.json
