@@ -138,12 +138,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  
-  const logoutBtn = document.getElementById("logoutBtn");
+   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       if (confirm("Are you sure you want to logout?")) {
-        window.location.href = "/login.html";
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("must_change_password");
+        window.location.href = "login.html";
       }
     });
   }
