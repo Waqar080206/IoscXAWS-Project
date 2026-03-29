@@ -159,3 +159,35 @@ window.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'login.html';
   }
 });
+
+// Theme Toggle Functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const THEME_KEY = "theme-preference";
+  const themeToggle = document.getElementById("themeToggle");
+  const themeLabel = document.getElementById("themeLabel");
+  const htmlElement = document.documentElement;
+  
+  function initTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+    if (savedTheme === "dark") {
+      htmlElement.classList.add("dark-mode");
+      if (themeLabel) themeLabel.textContent = "Dark";
+    } else {
+      htmlElement.classList.remove("dark-mode");
+      if (themeLabel) themeLabel.textContent = "Light";
+    }
+  }
+  
+  function toggleTheme() {
+    const isDarkMode = htmlElement.classList.toggle("dark-mode");
+    const theme = isDarkMode ? "dark" : "light";
+    localStorage.setItem(THEME_KEY, theme);
+    if (themeLabel) themeLabel.textContent = isDarkMode ? "Dark" : "Light";
+  }
+  
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleTheme);
+  }
+  
+  initTheme();
+});
