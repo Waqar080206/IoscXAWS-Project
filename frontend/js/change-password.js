@@ -32,22 +32,13 @@ function checkPasswordStrength(password) {
   
   let strength = 0;
   
-  // Length check
   if (password.length >= 8) strength++;
   if (password.length >= 12) strength++;
-  
-  // Uppercase and lowercase
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-  
-  // Numbers
   if (/[0-9]/.test(password)) strength++;
-  
-  // Special characters
   if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength++;
   
-  // Determine strength level
-  let level = 'weak';
-  let className = 'weak';
+  let level, className;
   
   if (strength >= 4) {
     level = 'Strong';
@@ -77,6 +68,21 @@ function showAlert(message, type = 'error') {
   }
 }
 
+// Extract a readable error message from any API response shape
+async function extractErrorMessage(response, fallback = 'Something went wrong. Please try again.') {
+  try {
+    const data = await response.json();
+    if (typeof data === 'string') return data;
+    if (typeof data.detail === 'string') return data.detail;
+    if (Array.isArray(data.detail)) return data.detail.map(e => e.msg || JSON.stringify(e)).join(', ');
+    if (typeof data.message === 'string') return data.message;
+    if (typeof data.error === 'string') return data.error;
+    return JSON.stringify(data);
+  } catch {
+    return fallback;
+  }
+}
+
 // Submit change password form
 async function submitChangePassword(e) {
   e.preventDefault();
@@ -84,17 +90,10 @@ async function submitChangePassword(e) {
   const currentPassword = document.getElementById('currentPassword').value;
   const newPassword = document.getElementById('newPassword').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
-  const photoFile = document.getElementById('studentPhoto').files[0];
   const submitBtn = document.getElementById('submitBtn');
   
-  // Validation
   if (!currentPassword || !newPassword || !confirmPassword) {
     showAlert('Please fill in all password fields', 'error');
-    return;
-  }
-  
-  if (!photoFile) {
-    showAlert('Please select a profile photograph', 'error');
     return;
   }
   
@@ -124,60 +123,22 @@ async function submitChangePassword(e) {
       return;
     }
 
-    // First get the student ID
-    const meResponse = await fetch(`${API}/auth/me`, {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    if (!meResponse.ok) {
-      throw new Error('Could not identify user');
-    }
-    const userData = await meResponse.json();
-    const studentId = userData.enrollment_number || userData.username;
-    
-    // Change password
-    const pwdResponse = await fetch(`${API}/account/change-password`, {
+    const pwdResponse = await fetch(`${API}/account/change-password?new_password=${encodeURIComponent(newPassword)}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        old_password: currentPassword,
-        new_password: newPassword
-      })
+      }
     });
     
     if (!pwdResponse.ok) {
-      const error = await pwdResponse.json();
-      showAlert(error.detail || 'Failed to change password', 'error');
-      submitBtn.disabled = false;
-      return;
-    }
-
-    // Upload photo
-    const formData = new FormData();
-    formData.append('photo', photoFile);
-
-    const photoResponse = await fetch(`${API}/students/${studentId}/photo`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
-    });
-
-    if (!photoResponse.ok) {
-      const error = await photoResponse.json();
-      showAlert(error.detail || 'Password changed, but photo upload failed!', 'error');
+      const message = await extractErrorMessage(pwdResponse, 'Failed to change password');
+      showAlert(message, 'error');
       submitBtn.disabled = false;
       return;
     }
     
-    // Update flag and redirect
     localStorage.setItem('must_change_password', 'false');
-    showAlert('Password changed and photo uploaded! Redirecting...', 'success');
+    showAlert('Password changed successfully! Redirecting...', 'success');
     
     setTimeout(() => {
       window.location.href = 'dashboard2.html';
