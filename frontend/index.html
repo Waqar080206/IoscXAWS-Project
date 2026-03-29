@@ -6,72 +6,189 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>E-Student Cell</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Nunito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      margin: 0;
       font-family: 'Nunito', sans-serif;
-      background-color: #f8f9fa;
+      position: relative;
     }
-    .landing-container {
+
+    /* ── Blurred + darkened background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: -20px;
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-position: center top;
+      filter: blur(6px) brightness(0.45);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Vignette ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 50% 45%,
+        transparent 25%,
+        rgba(0, 0, 0, 0.45) 70%,
+        rgba(0, 0, 0, 0.75) 100%
+      );
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Main content ── */
+    .landing-wrap {
+      position: relative;
+      z-index: 1;
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2rem;
+      padding: 3rem 1.5rem 2rem;
     }
+
+    /* ── Logo ── */
+    .logo-wrapper {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 1.8rem;
+    }
+
     .landing-logo {
-      width: 150px;
-      height: 150px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: block;
+      box-shadow: 0 4px 28px rgba(0, 0, 0, 0.6);
     }
+
+    /* ── Type ── */
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 0.65rem;
+    }
+
     .landing-title {
       font-family: 'Playfair Display', serif;
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      color: #1a1a1a;
+      font-size: clamp(2.8rem, 6vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
     }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.35);
+      margin: 1rem auto;
+    }
+
     .landing-subtitle {
-      font-size: 1.25rem;
-      color: #666;
-      margin-bottom: 3rem;
-      max-width: 600px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.65);
+      letter-spacing: 0.03em;
+      margin-bottom: 2.4rem;
     }
+
+    /* ── CTA button ── */
     .login-btn {
-      display: inline-block;
-      padding: 0.75rem 2.5rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: white;
-      background-color: #000;
-      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 30px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #111111;
+      background: #ffffff;
+      border: none;
+      border-radius: 4px;
       text-decoration: none;
-      transition: all 0.2s;
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s, color 0.18s;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
     }
+
     .login-btn:hover {
-      background-color: #333;
+      background: #f0f0f0;
       transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
+
+    .login-btn:active { transform: translateY(0); }
+
+    .btn-arrow {
+      display: inline-block;
+      transition: transform 0.18s;
+    }
+    .login-btn:hover .btn-arrow { transform: translateX(3px); }
+
+    /* ── Footer — fixed bottom-right ── */
+    footer.universal-footer {
+      position: fixed;
+      bottom: 18px;
+      right: 20px;
+      z-index: 2;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.3);
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    footer.universal-footer a {
+      color: rgba(255, 255, 255, 0.35);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer.universal-footer a:hover {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
   </style>
 </head>
 <body>
 
-  <div class="landing-container">
-    <img src="ipu.jpg" alt="ESC Logo" class="landing-logo"/>
+  <div class="landing-wrap">
+    <div class="logo-wrapper">
+      <img src="ipu.jpg" alt="IPU Logo" class="landing-logo"/>
+    </div>
+
+    <p class="eyebrow">Guru Gobind Singh Indraprastha University</p>
     <h1 class="landing-title">E-Student Cell</h1>
+
+    <div class="divider"></div>
+
     <p class="landing-subtitle">Welcome to the Student Management System.</p>
-    <a href="login.html" class="login-btn">Login</a>
+
+    <a href="login.html" class="login-btn">
+      Login to Portal
+      <span class="btn-arrow">→</span>
+    </a>
   </div>
 
-  <footer class="universal-footer" style="text-align: center; padding: 1rem; color: #666; font-size: 0.9rem;">Made by IoSC & AWS EDC | Support: <a href="mailto:iosc.aws@gmail.com" style="text-decoration: underline; color: inherit;">iosc.aws@gmail.com</a></footer>
-
-</body>
-</html>
+  <footer class="universal-footer">
+    Made by IoSC &amp; AWS EDC &nbsp;&middot;&nbsp; Support: <a href="/cdn-cgi/l/email-protection#e28b8d9181cc839591a2858f838b8ecc818d8f"><span class
