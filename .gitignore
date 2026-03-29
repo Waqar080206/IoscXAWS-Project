@@ -7,3 +7,4 @@ uploads/
 compose.yaml
 alembic.ini
 admins.json
+test.json
