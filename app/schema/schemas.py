@@ -12,8 +12,8 @@ class StudentBase(BaseModel):
     name: str
     branch: str
     year: int
-    email: EmailStr
-    mobile: str
+    email: Optional[str] = None
+    mobile: Optional[str] = None
     address: Optional[str] = None
 
 class StudentCreate(StudentBase):
